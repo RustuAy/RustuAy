@@ -1,509 +1,438 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  ChevronDown, 
-  Database, 
-  Code2, 
-  LineChart, 
-  BrainCircuit, 
-  Terminal, 
-  Cpu,
-  ExternalLink,
-  Send,
-  MapPin
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rüştü Ay | Veri Bilimci & Havacılık Uzmanı</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (JSX Derleyicisi) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-// --- Video Arka Plan Bileşeni ---
-const VideoBackground = () => {
-  return (
-    <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden">
-      {/* NOT: Buraya kendi videonu veya beğendiğin başka bir stock video URL'sini koyabilirsin.
-         Şu an veri bilimi temalı soyut bir video kullanıyoruz.
-      */}
-      <video 
-        autoPlay 
-        loop 
-        muted 
-        playsInline 
-        className="absolute w-full h-full object-cover opacity-40"
-      >
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-network-of-blue-lines-with-light-dots-2741-large.mp4" type="video/mp4" />
-      </video>
-      
-      {/* Videonun üzerine koyu bir katman atarak yazıların okunabilirliğini artırıyoruz */}
-      <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-[2px]"></div>
-      
-      {/* Dekoratif ızgara efekti */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-    </div>
-  );
-};
-
-// --- Daktilo Efekti (Typewriter) ---
-const TypewriterEffect = ({ words }) => {
-  const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
-  const [reverse, setReverse] = useState(false);
-  const [blink, setBlink] = useState(true);
-
-  // Yanıp sönen imleç
-  useEffect(() => {
-    const timeout2 = setTimeout(() => {
-      setBlink((prev) => !prev);
-    }, 500);
-    return () => clearTimeout(timeout2);
-  }, [blink]);
-
-  // Yazma mantığı
-  useEffect(() => {
-    if (index === words.length) return;
-
-    if (subIndex === words[index].length + 1 && !reverse) {
-      setTimeout(() => setReverse(true), 1000);
-      return;
-    }
-
-    if (subIndex === 0 && reverse) {
-      setReverse(false);
-      setIndex((prev) => (prev + 1) % words.length);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      setSubIndex((prev) => prev + (reverse ? -1 : 1));
-    }, Math.max(reverse ? 75 : subIndex === words[index].length ? 1000 : 150, parseInt(Math.random() * 350)));
-
-    return () => clearTimeout(timeout);
-  }, [subIndex, index, reverse, words]);
-
-  return (
-    <span className="font-mono text-cyan-400 text-xl md:text-2xl">
-      {`${words[index].substring(0, subIndex)}${blink ? "|" : " "}`}
-    </span>
-  );
-};
-
-// --- Ana Bileşen ---
-export default function Portfolio() {
-  const [activeSection, setActiveSection] = useState('home');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Scroll takibi
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'about', 'skills', 'projects', 'contact'];
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top >= 0 && rect.top <= 300;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        },
+                        cyan: {
+                            450: '#22d3ee',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
         }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    </script>
 
-  const scrollTo = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMenuOpen(false);
-    }
-  };
+    <style>
+        body {
+            background-color: #020617;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5), 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+        /* Canvas arkada kalsın */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #111827 0%, #020617 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-  return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
-      <VideoBackground />
+    <!-- React Kodu -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-      {/* Navbar */}
-      <nav className="fixed w-full z-50 bg-[#0f172a]/70 backdrop-blur-lg border-b border-slate-700/50 shadow-lg shadow-cyan-900/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex-shrink-0 cursor-pointer group" onClick={() => scrollTo('home')}>
-              <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300 filter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
-                Rüştü.Ay
-              </span>
-            </div>
+        // --- ICONS ---
+        const IconWrapper = ({ children, className, size = 24 }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
+        );
+
+        const Github = (p) => <IconWrapper {...p}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></IconWrapper>;
+        const Linkedin = (p) => <IconWrapper {...p}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></IconWrapper>;
+        const Mail = (p) => <IconWrapper {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></IconWrapper>;
+        const Plane = (p) => <IconWrapper {...p}><path d="M2 22h20"/><path d="M13 6h7a2 2 0 0 1 2 2v10"/><path d="M13 6 7.7 2.3a2 2 0 0 0-2.4.3L2 6"/><path d="m2 6 8 5"/><path d="M13 6v16"/></IconWrapper>; 
+        const Wrench = (p) => <IconWrapper {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></IconWrapper>;
+        const Database = (p) => <IconWrapper {...p}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></IconWrapper>;
+        const Activity = (p) => <IconWrapper {...p}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></IconWrapper>;
+        const Send = (p) => <IconWrapper {...p}><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></IconWrapper>;
+        const MapPin = (p) => <IconWrapper {...p}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconWrapper>;
+        const Brain = (p) => <IconWrapper {...p}><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></IconWrapper>;
+
+        // --- MODERN CANVAS BACKGROUND (Neural Network / Constellation) ---
+        const CanvasBackground = () => {
+            const canvasRef = useRef(null);
             
-            {/* Desktop Menu */}
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
-                {['Hakkımda', 'Yetenekler', 'Projeler', 'İletişim'].map((item) => {
-                   const id = item === 'Hakkımda' ? 'about' : item === 'Yetenekler' ? 'skills' : item === 'Projeler' ? 'projects' : 'contact';
-                   return (
-                    <button
-                      key={item}
-                      onClick={() => scrollTo(id)}
-                      className={`hover:text-cyan-400 text-sm font-medium transition-all duration-300 relative group ${activeSection === id ? 'text-cyan-400' : 'text-slate-300'}`}
-                    >
-                      {item}
-                      <span className={`absolute -bottom-1 left-0 h-0.5 bg-cyan-400 transition-all duration-300 ${activeSection === id ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
-                    </button>
-                   )
-                })}
-              </div>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="-mr-2 flex md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
-              >
-                {isMenuOpen ? (
-                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu Panel */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-[#0f172a] border-b border-slate-800 animate-fade-in-up">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {['Hakkımda', 'Yetenekler', 'Projeler', 'İletişim'].map((item) => {
-                 const id = item === 'Hakkımda' ? 'about' : item === 'Yetenekler' ? 'skills' : item === 'Projeler' ? 'projects' : 'contact';
-                 return (
-                  <button
-                    key={item}
-                    onClick={() => scrollTo(id)}
-                    className="text-slate-300 hover:text-cyan-400 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
-                  >
-                    {item}
-                  </button>
-                 )
-              })}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section id="home" className="min-h-screen flex items-center justify-center relative pt-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="animate-fade-in-up">
-            
-            <div className="mb-6 h-8">
-               <TypewriterEffect words={['Veri Bilimi Öğrencisi', 'Yapay Zeka Meraklısı', 'Python Geliştirici', 'Analitik Düşünür']} />
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-              Merhaba, Ben <br className="md:hidden"/>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
-                Rüştü Ay
-              </span>
-            </h1>
-            
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-300 bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
-               Hollanda'dan dünyaya, verilerin içindeki gizli hikayeleri keşfediyor ve geleceği algoritmalarla inşa ediyorum.
-            </p>
-            
-            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-              <button onClick={() => scrollTo('projects')} className="px-8 py-3 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium transition-all shadow-[0_0_20px_rgba(8,145,178,0.5)] hover:shadow-[0_0_30px_rgba(8,145,178,0.8)] transform hover:-translate-y-1">
-                Projelerimi Keşfet
-              </button>
-              <button onClick={() => scrollTo('contact')} className="px-8 py-3 rounded-lg bg-slate-800/50 border border-slate-600 hover:border-cyan-400 hover:text-cyan-400 hover:bg-slate-800 transition-all backdrop-blur-md">
-                İletişime Geç
-              </button>
-            </div>
-
-            <div className="mt-12 flex justify-center space-x-6">
-              {[Github, Linkedin, Mail].map((Icon, i) => (
-                <a key={i} href="#" className="p-3 bg-slate-800/50 rounded-full border border-slate-700/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transform hover:scale-110 transition-all duration-200 backdrop-blur-sm">
-                  <Icon size={24} />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        <div className="absolute bottom-10 w-full flex justify-center animate-bounce">
-          <button onClick={() => scrollTo('about')} className="text-slate-500 hover:text-cyan-400 transition-colors">
-            <ChevronDown size={32} />
-          </button>
-        </div>
-      </section>
-
-      {/* Hakkımda Section */}
-      <section id="about" className="py-20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
-            
-            {/* Cam Efektli Kart & Ikon */}
-            <div className="relative mb-12 lg:mb-0 group perspective-1000">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-              <div className="relative bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 aspect-square flex items-center justify-center overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02]">
-                 {/* Dönen Veri Halkaları */}
-                 <div className="absolute w-[150%] h-[150%] border border-cyan-500/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
-                 <div className="absolute w-[120%] h-[120%] border border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
-                 
-                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <Terminal size={80} className="text-cyan-400 drop-shadow-[0_0_25px_rgba(34,211,238,0.6)]" />
-                 </div>
-              </div>
-            </div>
-            
-            <div className="bg-slate-900/40 p-8 rounded-2xl border border-slate-700/30 backdrop-blur-md">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 flex items-center">
-                <span className="bg-cyan-500 w-2 h-10 mr-4 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
-                Hakkımda
-              </h2>
-              <p className="text-lg text-slate-300 mb-6 leading-relaxed">
-                Ben Rüştü Ay. Hollanda'da yaşayan ve küresel vizyona sahip bir veri bilimi öğrencisiyim. Karmaşık veri setlerini anlamlı içgörülere dönüştürmeyi, makine öğrenmesi modelleriyle gerçek dünya problemlerini çözmeyi seviyorum.
-              </p>
-              <p className="text-lg text-slate-300 mb-8 leading-relaxed">
-                Teknolojinin kalbinin attığı bir coğrafyada, yapay zeka ve büyük veri teknolojilerini kullanarak hem akademik hem de pratik alanda kendimi geliştiriyorum.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-6">
-                {[
-                    { label: 'Eğitim', val: 'Veri Bilimi' },
-                    { label: 'Odak', val: 'Yapay Zeka & ML' },
-                    { label: 'Lokasyon', val: 'Hollanda' },
-                    { label: 'Durum', val: 'Open to Work' }
-                ].map((stat, i) => (
-                    <div key={i} className="border-l-2 border-cyan-500/50 pl-4 hover:border-cyan-400 transition-colors">
-                        <p className="text-slate-500 text-sm font-mono">{stat.label}</p>
-                        <p className="text-xl font-semibold text-slate-200">{stat.val}</p>
-                    </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Yetenekler Section */}
-      <section id="skills" className="py-20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Teknik Yetenekler</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Kategori 1 */}
-            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-              <div className="w-14 h-14 bg-cyan-500/10 rounded-xl flex items-center justify-center mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
-                <Code2 size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-100">Programlama & Araçlar</h3>
-              <div className="flex flex-wrap gap-2">
-                {['Python', 'R', 'SQL', 'Git', 'Bash', 'Docker'].map(skill => (
-                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400 transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Kategori 2 */}
-            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-purple-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]">
-              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform">
-                <BrainCircuit size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-100">Yapay Zeka & ML</h3>
-              <div className="flex flex-wrap gap-2">
-                {['TensorFlow', 'PyTorch', 'Scikit-learn', 'NLP', 'Computer Vision', 'Pandas'].map(skill => (
-                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-purple-500/50 hover:text-purple-400 transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Kategori 3 */}
-            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-blue-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
-                <LineChart size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-100">Veri Görselleştirme</h3>
-              <div className="flex flex-wrap gap-2">
-                {['Matplotlib', 'Seaborn', 'Tableau', 'PowerBI', 'D3.js'].map(skill => (
-                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-blue-500/50 hover:text-blue-400 transition-colors cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Projeler Section */}
-      <section id="projects" className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 bg-slate-900/40 p-6 rounded-2xl border border-slate-700/30 backdrop-blur-md">
-             <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">Öne Çıkan Projeler</h2>
-                <p className="text-slate-400">Veri bilimi yolculuğumdan kesitler.</p>
-             </div>
-             <button className="hidden md:flex items-center px-4 py-2 rounded-lg bg-slate-800 text-cyan-400 hover:bg-slate-700 hover:text-white transition-all mt-4 md:mt-0 border border-slate-600 hover:border-cyan-400">
-                GitHub'da Görüntüle <ExternalLink size={16} className="ml-2" />
-             </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Müşteri Kayıp Analizi',
-                desc: 'Telekom verilerini analiz ederek müşteri kaybını (churn) %85 doğrulukla tahmin eden XGBoost modeli.',
-                tags: ['Python', 'ML', 'Big Data'],
-                icon: <Database size={32} className="text-cyan-400" />,
-                color: 'cyan'
-              },
-              {
-                title: 'Hollanda Konut Fiyat Tahmini',
-                desc: 'Hollanda emlak piyasası verileriyle eğitilmiş, bölgesel fiyat tahminlemesi yapan regresyon projesi.',
-                tags: ['R', 'Regression', 'GeoSpatial'],
-                icon: <LineChart size={32} className="text-purple-400" />,
-                color: 'purple'
-              },
-              {
-                title: 'Akıllı Haber Sınıflandırıcı',
-                desc: 'NLP teknikleri kullanarak haber metinlerini otomatik olarak kategorize eden (Spor, Ekonomi, Teknoloji) sistem.',
-                tags: ['NLP', 'Deep Learning', 'API'],
-                icon: <Cpu size={32} className="text-blue-400" />,
-                color: 'blue'
-              }
-            ].map((proj, i) => (
-              <div key={i} className="group relative bg-slate-800/40 backdrop-blur-md rounded-xl overflow-hidden border border-slate-700 hover:border-slate-500 transition-all hover:-translate-y-2 duration-300 shadow-lg">
-                {/* Hover Glow Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br from-${proj.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                let width, height;
+                let particles = [];
                 
-                <div className={`h-1 w-full bg-gradient-to-r from-${proj.color}-500 to-slate-800`}></div>
-                
-                <div className="p-6 relative z-10">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-700 group-hover:border-cyan-500/50 transition-colors">
-                        {proj.icon}
-                    </div>
-                    <div className="flex space-x-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                        <a href="#" className="text-slate-300 hover:text-white hover:scale-110 transition-all"><Github size={20}/></a>
-                        <a href="#" className="text-slate-300 hover:text-white hover:scale-110 transition-all"><ExternalLink size={20}/></a>
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-2 text-slate-100 group-hover:text-cyan-400 transition-colors">{proj.title}</h3>
-                  <p className="text-slate-400 text-sm mb-6 h-20 overflow-hidden leading-relaxed">{proj.desc}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    {proj.tags.map(tag => (
-                        <span key={tag} className="text-xs font-mono text-slate-300 bg-slate-900/80 px-2 py-1 rounded border border-slate-700 group-hover:border-cyan-500/30 transition-colors">
-                            #{tag}
-                        </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                // Renk Paleti
+                const colors = ['rgba(34, 211, 238, ', 'rgba(56, 189, 248, ', 'rgba(99, 102, 241, ']; 
 
-      {/* İletişim Section */}
-      <section id="contact" className="py-20 relative overflow-hidden">
-        
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="bg-slate-800/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-slate-700 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-4 text-white">İletişime Geçin</h2>
-              <p className="text-slate-400">
-                Hollanda veya uzaktan çalışma fırsatları, proje işbirlikleri için mesaj atabilirsiniz.
-              </p>
-            </div>
+                const init = () => {
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    particles = [];
+                    // Ekran boyutuna göre parçacık sayısı
+                    const particleCount = width > 768 ? 100 : 50; 
+                    
+                    for(let i = 0; i < particleCount; i++) {
+                        particles.push({
+                            x: Math.random() * width,
+                            y: Math.random() * height,
+                            vx: (Math.random() - 0.5) * 0.3, // Yavaş hareket
+                            vy: (Math.random() - 0.5) * 0.3,
+                            size: Math.random() * 2 + 0.5,
+                            color: colors[Math.floor(Math.random() * colors.length)]
+                        });
+                    }
+                };
 
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="group">
-                  <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">İsim</label>
-                  <input type="text" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Adınız" />
-                </div>
-                <div className="group">
-                  <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">E-posta</label>
-                  <input type="email" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="ornek@mail.com" />
-                </div>
-              </div>
-              
-              <div className="group">
-                <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">Mesaj</label>
-                <textarea rows="4" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Proje detayları..."></textarea>
-              </div>
+                const draw = () => {
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    // Parçacıkları çiz
+                    particles.forEach((p, i) => {
+                        p.x += p.vx;
+                        p.y += p.vy;
 
-              <button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all transform hover:-translate-y-1 flex items-center justify-center group">
-                <Send size={20} className="mr-2 group-hover:rotate-45 transition-transform" />
-                Mesaj Gönder
-              </button>
-            </form>
-            
-            <div className="mt-10 flex flex-col md:flex-row justify-center gap-8 pt-8 border-t border-slate-700/50">
-                <div className="flex items-center justify-center md:justify-start space-x-3">
-                    <div className="p-2 bg-cyan-500/10 rounded-full text-cyan-400">
-                        <Mail size={20} />
-                    </div>
-                    <div className="text-left">
-                        <div className="text-slate-200 font-medium">E-Posta</div>
-                        <div className="text-slate-400 text-sm">rustu.ay@example.com</div>
-                    </div>
-                </div>
-                <div className="flex items-center justify-center md:justify-start space-x-3">
-                    <div className="p-2 bg-purple-500/10 rounded-full text-purple-400">
-                        <MapPin size={20} />
-                    </div>
-                    <div className="text-left">
-                        <div className="text-slate-200 font-medium">Konum</div>
-                        <div className="text-slate-400 text-sm">Hollanda</div>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                        // Kenarlardan sekme
+                        if(p.x < 0 || p.x > width) p.vx *= -1;
+                        if(p.y < 0 || p.y > height) p.vy *= -1;
 
-      {/* Footer */}
-      <footer className="py-8 text-center text-slate-500 text-sm border-t border-slate-800 bg-[#0f172a]/90 backdrop-blur relative z-10">
-        <p>&copy; {new Date().getFullYear()} Rüştü Ay. Hollanda'da ❤️ ile kodlandı.</p>
-        <div className="mt-2 flex justify-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse delay-100"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse delay-200"></span>
-        </div>
-      </footer>
+                        // Nokta çizimi
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color + '0.8)';
+                        ctx.fill();
 
-      {/* Global Styles for Animations */}
-      <style>{`
-        @keyframes fade-in-up {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 1s ease-out;
-        }
-        @keyframes gradient-x {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient-x {
-          background-size: 200% 200%;
-          animation: gradient-x 5s ease infinite;
-        }
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-      `}</style>
-    </div>
-  );
-}
+                        // Bağlantı çizgileri (Network Effect)
+                        for(let j = i + 1; j < particles.length; j++) {
+                            const p2 = particles[j];
+                            const dx = p.x - p2.x;
+                            const dy = p.y - p2.y;
+                            const dist = Math.sqrt(dx*dx + dy*dy);
+                            const maxDist = 150;
+
+                            if(dist < maxDist) {
+                                ctx.beginPath();
+                                ctx.strokeStyle = p.color + (1 - dist/maxDist) * 0.15 + ')';
+                                ctx.lineWidth = 0.5;
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                    requestAnimationFrame(draw);
+                };
+
+                init();
+                draw();
+
+                window.addEventListener('resize', init);
+                return () => window.removeEventListener('resize', init);
+            }, []);
+
+            return <canvas ref={canvasRef} id="canvas-container" />;
+        };
+
+        const Portfolio = () => {
+            const [activeTab, setActiveTab] = useState('skills');
+
+            const scrollTo = (id) => {
+                document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            return (
+                <div className="min-h-screen relative selection:bg-cyan-500 selection:text-white">
+                    <CanvasBackground />
+                    
+                    {/* Navigation */}
+                    <nav className="fixed w-full z-50 glass-card border-b-0 border-b-slate-800">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between h-20">
+                                <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollTo('home')}>
+                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl">
+                                        R
+                                    </div>
+                                    <span className="text-xl font-bold tracking-tight">Rüştü.Ay</span>
+                                </div>
+                                <div className="hidden md:flex space-x-8">
+                                    {['Hakkımda', 'Geçmiş', 'Projeler', 'İletişim'].map((item) => (
+                                        <button 
+                                            key={item} 
+                                            onClick={() => scrollTo(item.toLowerCase().replace('geçmiş', 'history').replace('hakkımda', 'about').replace('projeler', 'projects').replace('iletişim', 'contact'))}
+                                            className="text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors uppercase tracking-wider"
+                                        >
+                                            {item}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section id="home" className="min-h-screen flex items-center justify-center px-4 pt-20">
+                        <div className="max-w-5xl w-full text-center z-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-mono mb-8 animate-fade-in-up">
+                                <Plane size={16} />
+                                <span>Aviation Expert & Data Scientist</span>
+                            </div>
+                            
+                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 leading-tight animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+                                Verinin <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 neon-text">Pilotu.</span>
+                            </h1>
+                            
+                            <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+                                17 yıllık uçak bakım ve teknik operasyon disiplinini, modern veri bilimi ve yapay zeka yetkinlikleriyle birleştirerek, Hollanda'dan dünyaya değer katan çözümler üretiyorum.
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+                                <button onClick={() => scrollTo('projects')} className="px-8 py-4 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-all shadow-[0_0_30px_rgba(8,145,178,0.3)] hover:shadow-[0_0_50px_rgba(8,145,178,0.5)] w-full sm:w-auto">
+                                    Projelerimi İncele
+                                </button>
+                                <button onClick={() => scrollTo('contact')} className="px-8 py-4 rounded-lg glass-card hover:bg-slate-800 border border-slate-700 text-white font-medium transition-all w-full sm:w-auto flex items-center justify-center gap-2">
+                                    <Mail size={20} />
+                                    İletişime Geç
+                                </button>
+                            </div>
+                            
+                            {/* Stats Strip */}
+                            <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-slate-800 pt-8 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
+                                <div>
+                                    <div className="text-3xl font-bold text-white">17+</div>
+                                    <div className="text-sm text-slate-500 font-mono">Yıl Havacılık</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-white">NL</div>
+                                    <div className="text-sm text-slate-500 font-mono">Lokasyon</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-white">DS</div>
+                                    <div className="text-sm text-slate-500 font-mono">Veri Bilimi</div>
+                                </div>
+                                <div>
+                                    <div className="text-3xl font-bold text-white">∞</div>
+                                    <div className="text-sm text-slate-500 font-mono">Sürekli Öğrenme</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Deneyim & Geçmiş Section */}
+                    <section id="history" className="py-24 relative">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="flex flex-col md:flex-row gap-12">
+                                <div className="md:w-1/3">
+                                    <h2 className="text-4xl font-bold mb-4">Kariyer <br/><span className="text-cyan-400">Yolculuğum</span></h2>
+                                    <p className="text-slate-400 mb-6">
+                                        Mekanik sistemlerden dijital algoritmalara uzanan, disiplin ve analitik düşünceyle yoğrulmuş bir kariyer hikayesi.
+                                    </p>
+                                    <div className="p-6 rounded-2xl bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border border-cyan-500/20">
+                                        <Wrench className="text-cyan-400 mb-4" size={32} />
+                                        <h3 className="text-lg font-bold text-white mb-2">Teknik Disiplin</h3>
+                                        <p className="text-sm text-slate-400">
+                                            Havacılıkta hata payı yoktur. Bu disiplini veri temizleme ve modelleme süreçlerime de yansıtıyorum.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="md:w-2/3 space-y-8">
+                                    {/* Timeline Item 1 */}
+                                    <div className="flex gap-4 group">
+                                        <div className="flex flex-col items-center">
+                                            <div className="w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
+                                            <div className="w-0.5 h-full bg-slate-800 group-hover:bg-cyan-500/50 transition-colors"></div>
+                                        </div>
+                                        <div className="pb-8">
+                                            <span className="text-cyan-400 font-mono text-sm">Şu An</span>
+                                            <h3 className="text-2xl font-bold text-white mt-1">Veri Bilimi & Yapay Zeka</h3>
+                                            <p className="text-slate-400 mt-2">
+                                                Python, Machine Learning ve Büyük Veri teknolojileri üzerine yoğunlaşmış çalışmalar. Hollanda'da akademik ve pratik projeler geliştirme.
+                                            </p>
+                                            <div className="flex gap-2 mt-3">
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">Python</span>
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">TensorFlow</span>
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">SQL</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Timeline Item 2 */}
+                                    <div className="flex gap-4 group">
+                                        <div className="flex flex-col items-center">
+                                            <div className="w-4 h-4 rounded-full bg-slate-600 group-hover:bg-cyan-500 transition-colors"></div>
+                                            <div className="w-0.5 h-full bg-slate-800"></div>
+                                        </div>
+                                        <div className="pb-8">
+                                            <span className="text-slate-500 font-mono text-sm">17 Yıllık Tecrübe</span>
+                                            <h3 className="text-2xl font-bold text-white mt-1">Uçak Bakım & Teknik Operasyonlar</h3>
+                                            <p className="text-slate-400 mt-2">
+                                                Karmaşık mekanik ve aviyonik sistemlerin bakımı, arıza tespiti (troubleshooting) ve operasyonel verimlilik yönetimi. Kritik karar alma ve stres yönetimi konusunda uzmanlık.
+                                            </p>
+                                            <div className="flex gap-2 mt-3">
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">Sistem Analizi</span>
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">Problem Çözme</span>
+                                                <span className="px-3 py-1 text-xs rounded-full bg-slate-800 text-slate-300">Güvenlik Yönetimi</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Projeler Section */}
+                    <section id="projects" className="py-24 bg-slate-900/30">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <div className="mb-12 text-center">
+                                <h2 className="text-4xl font-bold mb-4">Seçilmiş Projeler</h2>
+                                <p className="text-slate-400">Havacılık titizliğini veri bilimiyle buluşturduğum çalışmalar.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Proje 1: Havacılık Odaklı */}
+                                <div className="glass-card p-8 rounded-2xl group hover:-translate-y-2 transition-transform duration-300">
+                                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 mb-6 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <Plane size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">Uçak Motoru Kestirimci Bakım</h3>
+                                    <p className="text-slate-400 text-sm mb-6 line-clamp-3">
+                                        NASA'nın turbofan motor verisetini kullanarak, motor arızalarını gerçekleşmeden önce tahmin eden LSTM (Derin Öğrenme) modeli. Bakım maliyetlerini minimize etmeyi hedefler.
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="text-xs font-mono text-blue-300">#PredictiveMaintenance</span>
+                                        <span className="text-xs font-mono text-blue-300">#TimeSeries</span>
+                                    </div>
+                                </div>
+
+                                {/* Proje 2: Data Science Klasik */}
+                                <div className="glass-card p-8 rounded-2xl group hover:-translate-y-2 transition-transform duration-300">
+                                    <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center text-cyan-400 mb-6 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                                        <Database size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">Müşteri Kayıp (Churn) Analizi</h3>
+                                    <p className="text-slate-400 text-sm mb-6 line-clamp-3">
+                                        Büyük bir telekomünikasyon şirketi için müşteri davranışlarını analiz eden ve %85 doğrulukla ayrılacak müşterileri tespit eden makine öğrenmesi projesi.
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="text-xs font-mono text-cyan-300">#XGBoost</span>
+                                        <span className="text-xs font-mono text-cyan-300">#EDA</span>
+                                    </div>
+                                </div>
+
+                                {/* Proje 3: NLP / AI */}
+                                <div className="glass-card p-8 rounded-2xl group hover:-translate-y-2 transition-transform duration-300">
+                                    <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 mb-6 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                                        <Brain size={24} />
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-3">Teknik Doküman Analiz Asistanı</h3>
+                                    <p className="text-slate-400 text-sm mb-6 line-clamp-3">
+                                        NLP teknikleri kullanarak uzun teknik bakım manuellerini özetleyen ve anahtar kelimeleri çıkaran yapay zeka destekli bot.
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="text-xs font-mono text-purple-300">#NLP</span>
+                                        <span className="text-xs font-mono text-purple-300">#Transformers</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* İletişim Section */}
+                    <section id="contact" className="py-24 relative">
+                        <div className="max-w-4xl mx-auto px-4 text-center">
+                            <div className="glass-card rounded-3xl p-12 border-t border-cyan-500/30 relative overflow-hidden">
+                                {/* Background glow */}
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent shadow-[0_0_50px_rgba(34,211,238,0.5)]"></div>
+
+                                <h2 className="text-4xl font-bold mb-6">Birlikte Çalışalım</h2>
+                                <p className="text-slate-400 mb-8 max-w-2xl mx-auto">
+                                    Havacılık sektöründeki derin tecrübem veya veri bilimi projelerim hakkında konuşmak, Hollanda'da veya global ölçekte işbirlikleri geliştirmek için hazırım.
+                                </p>
+                                
+                                <div className="flex flex-col md:flex-row justify-center gap-6 mb-8">
+                                    <a href="mailto:rustu.ay@example.com" className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700">
+                                        <Mail className="text-cyan-400" />
+                                        <span>rustu.ay@example.com</span>
+                                    </a>
+                                    <div className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-slate-800 border border-slate-700">
+                                        <MapPin className="text-purple-400" />
+                                        <span>Hollanda</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-center gap-6">
+                                    <a href="#" className="p-4 rounded-full bg-slate-900 hover:bg-cyan-600 hover:text-white transition-colors border border-slate-700">
+                                        <Linkedin size={24} />
+                                    </a>
+                                    <a href="#" className="p-4 rounded-full bg-slate-900 hover:bg-gray-100 hover:text-black transition-colors border border-slate-700">
+                                        <Github size={24} />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer className="py-8 text-center text-slate-600 text-sm">
+                        <p>&copy; {new Date().getFullYear()} Rüştü Ay. All systems operational.</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Portfolio />);
+    </script>
+</body>
+</html>
