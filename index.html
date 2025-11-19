@@ -1,0 +1,509 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Github, 
+  Linkedin, 
+  Mail, 
+  ChevronDown, 
+  Database, 
+  Code2, 
+  LineChart, 
+  BrainCircuit, 
+  Terminal, 
+  Cpu,
+  ExternalLink,
+  Send,
+  MapPin
+} from 'lucide-react';
+
+// --- Video Arka Plan Bileşeni ---
+const VideoBackground = () => {
+  return (
+    <div className="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden">
+      {/* NOT: Buraya kendi videonu veya beğendiğin başka bir stock video URL'sini koyabilirsin.
+         Şu an veri bilimi temalı soyut bir video kullanıyoruz.
+      */}
+      <video 
+        autoPlay 
+        loop 
+        muted 
+        playsInline 
+        className="absolute w-full h-full object-cover opacity-40"
+      >
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-network-of-blue-lines-with-light-dots-2741-large.mp4" type="video/mp4" />
+      </video>
+      
+      {/* Videonun üzerine koyu bir katman atarak yazıların okunabilirliğini artırıyoruz */}
+      <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-[2px]"></div>
+      
+      {/* Dekoratif ızgara efekti */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+    </div>
+  );
+};
+
+// --- Daktilo Efekti (Typewriter) ---
+const TypewriterEffect = ({ words }) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [reverse, setReverse] = useState(false);
+  const [blink, setBlink] = useState(true);
+
+  // Yanıp sönen imleç
+  useEffect(() => {
+    const timeout2 = setTimeout(() => {
+      setBlink((prev) => !prev);
+    }, 500);
+    return () => clearTimeout(timeout2);
+  }, [blink]);
+
+  // Yazma mantığı
+  useEffect(() => {
+    if (index === words.length) return;
+
+    if (subIndex === words[index].length + 1 && !reverse) {
+      setTimeout(() => setReverse(true), 1000);
+      return;
+    }
+
+    if (subIndex === 0 && reverse) {
+      setReverse(false);
+      setIndex((prev) => (prev + 1) % words.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (reverse ? -1 : 1));
+    }, Math.max(reverse ? 75 : subIndex === words[index].length ? 1000 : 150, parseInt(Math.random() * 350)));
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, index, reverse, words]);
+
+  return (
+    <span className="font-mono text-cyan-400 text-xl md:text-2xl">
+      {`${words[index].substring(0, subIndex)}${blink ? "|" : " "}`}
+    </span>
+  );
+};
+
+// --- Ana Bileşen ---
+export default function Portfolio() {
+  const [activeSection, setActiveSection] = useState('home');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Scroll takibi
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['home', 'about', 'skills', 'projects', 'contact'];
+      const current = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top >= 0 && rect.top <= 300;
+        }
+        return false;
+      });
+      if (current) setActiveSection(current);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollTo = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMenuOpen(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+      <VideoBackground />
+
+      {/* Navbar */}
+      <nav className="fixed w-full z-50 bg-[#0f172a]/70 backdrop-blur-lg border-b border-slate-700/50 shadow-lg shadow-cyan-900/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex-shrink-0 cursor-pointer group" onClick={() => scrollTo('home')}>
+              <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300 filter drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">
+                Rüştü.Ay
+              </span>
+            </div>
+            
+            {/* Desktop Menu */}
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                {['Hakkımda', 'Yetenekler', 'Projeler', 'İletişim'].map((item) => {
+                   const id = item === 'Hakkımda' ? 'about' : item === 'Yetenekler' ? 'skills' : item === 'Projeler' ? 'projects' : 'contact';
+                   return (
+                    <button
+                      key={item}
+                      onClick={() => scrollTo(id)}
+                      className={`hover:text-cyan-400 text-sm font-medium transition-all duration-300 relative group ${activeSection === id ? 'text-cyan-400' : 'text-slate-300'}`}
+                    >
+                      {item}
+                      <span className={`absolute -bottom-1 left-0 h-0.5 bg-cyan-400 transition-all duration-300 ${activeSection === id ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                    </button>
+                   )
+                })}
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="-mr-2 flex md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none"
+              >
+                {isMenuOpen ? (
+                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu Panel */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-[#0f172a] border-b border-slate-800 animate-fade-in-up">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {['Hakkımda', 'Yetenekler', 'Projeler', 'İletişim'].map((item) => {
+                 const id = item === 'Hakkımda' ? 'about' : item === 'Yetenekler' ? 'skills' : item === 'Projeler' ? 'projects' : 'contact';
+                 return (
+                  <button
+                    key={item}
+                    onClick={() => scrollTo(id)}
+                    className="text-slate-300 hover:text-cyan-400 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
+                  >
+                    {item}
+                  </button>
+                 )
+              })}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section id="home" className="min-h-screen flex items-center justify-center relative pt-16 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="animate-fade-in-up">
+            
+            <div className="mb-6 h-8">
+               <TypewriterEffect words={['Veri Bilimi Öğrencisi', 'Yapay Zeka Meraklısı', 'Python Geliştirici', 'Analitik Düşünür']} />
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
+              Merhaba, Ben <br className="md:hidden"/>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-gradient-x drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                Rüştü Ay
+              </span>
+            </h1>
+            
+            <p className="mt-4 max-w-2xl mx-auto text-xl text-slate-300 bg-slate-900/40 p-4 rounded-xl border border-slate-700/50 backdrop-blur-md">
+               Hollanda'dan dünyaya, verilerin içindeki gizli hikayeleri keşfediyor ve geleceği algoritmalarla inşa ediyorum.
+            </p>
+            
+            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+              <button onClick={() => scrollTo('projects')} className="px-8 py-3 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium transition-all shadow-[0_0_20px_rgba(8,145,178,0.5)] hover:shadow-[0_0_30px_rgba(8,145,178,0.8)] transform hover:-translate-y-1">
+                Projelerimi Keşfet
+              </button>
+              <button onClick={() => scrollTo('contact')} className="px-8 py-3 rounded-lg bg-slate-800/50 border border-slate-600 hover:border-cyan-400 hover:text-cyan-400 hover:bg-slate-800 transition-all backdrop-blur-md">
+                İletişime Geç
+              </button>
+            </div>
+
+            <div className="mt-12 flex justify-center space-x-6">
+              {[Github, Linkedin, Mail].map((Icon, i) => (
+                <a key={i} href="#" className="p-3 bg-slate-800/50 rounded-full border border-slate-700/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] transform hover:scale-110 transition-all duration-200 backdrop-blur-sm">
+                  <Icon size={24} />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        <div className="absolute bottom-10 w-full flex justify-center animate-bounce">
+          <button onClick={() => scrollTo('about')} className="text-slate-500 hover:text-cyan-400 transition-colors">
+            <ChevronDown size={32} />
+          </button>
+        </div>
+      </section>
+
+      {/* Hakkımda Section */}
+      <section id="about" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+            
+            {/* Cam Efektli Kart & Ikon */}
+            <div className="relative mb-12 lg:mb-0 group perspective-1000">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+              <div className="relative bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 aspect-square flex items-center justify-center overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02]">
+                 {/* Dönen Veri Halkaları */}
+                 <div className="absolute w-[150%] h-[150%] border border-cyan-500/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                 <div className="absolute w-[120%] h-[120%] border border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+                 
+                 <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <Terminal size={80} className="text-cyan-400 drop-shadow-[0_0_25px_rgba(34,211,238,0.6)]" />
+                 </div>
+              </div>
+            </div>
+            
+            <div className="bg-slate-900/40 p-8 rounded-2xl border border-slate-700/30 backdrop-blur-md">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 flex items-center">
+                <span className="bg-cyan-500 w-2 h-10 mr-4 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.8)]"></span>
+                Hakkımda
+              </h2>
+              <p className="text-lg text-slate-300 mb-6 leading-relaxed">
+                Ben Rüştü Ay. Hollanda'da yaşayan ve küresel vizyona sahip bir veri bilimi öğrencisiyim. Karmaşık veri setlerini anlamlı içgörülere dönüştürmeyi, makine öğrenmesi modelleriyle gerçek dünya problemlerini çözmeyi seviyorum.
+              </p>
+              <p className="text-lg text-slate-300 mb-8 leading-relaxed">
+                Teknolojinin kalbinin attığı bir coğrafyada, yapay zeka ve büyük veri teknolojilerini kullanarak hem akademik hem de pratik alanda kendimi geliştiriyorum.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                    { label: 'Eğitim', val: 'Veri Bilimi' },
+                    { label: 'Odak', val: 'Yapay Zeka & ML' },
+                    { label: 'Lokasyon', val: 'Hollanda' },
+                    { label: 'Durum', val: 'Open to Work' }
+                ].map((stat, i) => (
+                    <div key={i} className="border-l-2 border-cyan-500/50 pl-4 hover:border-cyan-400 transition-colors">
+                        <p className="text-slate-500 text-sm font-mono">{stat.label}</p>
+                        <p className="text-xl font-semibold text-slate-200">{stat.val}</p>
+                    </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Yetenekler Section */}
+      <section id="skills" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Teknik Yetenekler</h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Kategori 1 */}
+            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-cyan-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+              <div className="w-14 h-14 bg-cyan-500/10 rounded-xl flex items-center justify-center mb-6 text-cyan-400 group-hover:scale-110 transition-transform">
+                <Code2 size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-slate-100">Programlama & Araçlar</h3>
+              <div className="flex flex-wrap gap-2">
+                {['Python', 'R', 'SQL', 'Git', 'Bash', 'Docker'].map(skill => (
+                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-cyan-500/50 hover:text-cyan-400 transition-colors cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Kategori 2 */}
+            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-purple-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform">
+                <BrainCircuit size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-slate-100">Yapay Zeka & ML</h3>
+              <div className="flex flex-wrap gap-2">
+                {['TensorFlow', 'PyTorch', 'Scikit-learn', 'NLP', 'Computer Vision', 'Pandas'].map(skill => (
+                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-purple-500/50 hover:text-purple-400 transition-colors cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Kategori 3 */}
+            <div className="group bg-slate-800/30 p-6 rounded-2xl border border-slate-700 hover:border-blue-500 transition-all duration-300 backdrop-blur-sm hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]">
+              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 text-blue-400 group-hover:scale-110 transition-transform">
+                <LineChart size={32} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-slate-100">Veri Görselleştirme</h3>
+              <div className="flex flex-wrap gap-2">
+                {['Matplotlib', 'Seaborn', 'Tableau', 'PowerBI', 'D3.js'].map(skill => (
+                  <span key={skill} className="px-3 py-1 bg-slate-900/60 rounded-lg text-sm text-slate-300 border border-slate-700 hover:border-blue-500/50 hover:text-blue-400 transition-colors cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Projeler Section */}
+      <section id="projects" className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 bg-slate-900/40 p-6 rounded-2xl border border-slate-700/30 backdrop-blur-md">
+             <div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">Öne Çıkan Projeler</h2>
+                <p className="text-slate-400">Veri bilimi yolculuğumdan kesitler.</p>
+             </div>
+             <button className="hidden md:flex items-center px-4 py-2 rounded-lg bg-slate-800 text-cyan-400 hover:bg-slate-700 hover:text-white transition-all mt-4 md:mt-0 border border-slate-600 hover:border-cyan-400">
+                GitHub'da Görüntüle <ExternalLink size={16} className="ml-2" />
+             </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Müşteri Kayıp Analizi',
+                desc: 'Telekom verilerini analiz ederek müşteri kaybını (churn) %85 doğrulukla tahmin eden XGBoost modeli.',
+                tags: ['Python', 'ML', 'Big Data'],
+                icon: <Database size={32} className="text-cyan-400" />,
+                color: 'cyan'
+              },
+              {
+                title: 'Hollanda Konut Fiyat Tahmini',
+                desc: 'Hollanda emlak piyasası verileriyle eğitilmiş, bölgesel fiyat tahminlemesi yapan regresyon projesi.',
+                tags: ['R', 'Regression', 'GeoSpatial'],
+                icon: <LineChart size={32} className="text-purple-400" />,
+                color: 'purple'
+              },
+              {
+                title: 'Akıllı Haber Sınıflandırıcı',
+                desc: 'NLP teknikleri kullanarak haber metinlerini otomatik olarak kategorize eden (Spor, Ekonomi, Teknoloji) sistem.',
+                tags: ['NLP', 'Deep Learning', 'API'],
+                icon: <Cpu size={32} className="text-blue-400" />,
+                color: 'blue'
+              }
+            ].map((proj, i) => (
+              <div key={i} className="group relative bg-slate-800/40 backdrop-blur-md rounded-xl overflow-hidden border border-slate-700 hover:border-slate-500 transition-all hover:-translate-y-2 duration-300 shadow-lg">
+                {/* Hover Glow Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br from-${proj.color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <div className={`h-1 w-full bg-gradient-to-r from-${proj.color}-500 to-slate-800`}></div>
+                
+                <div className="p-6 relative z-10">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-700 group-hover:border-cyan-500/50 transition-colors">
+                        {proj.icon}
+                    </div>
+                    <div className="flex space-x-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <a href="#" className="text-slate-300 hover:text-white hover:scale-110 transition-all"><Github size={20}/></a>
+                        <a href="#" className="text-slate-300 hover:text-white hover:scale-110 transition-all"><ExternalLink size={20}/></a>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold mb-2 text-slate-100 group-hover:text-cyan-400 transition-colors">{proj.title}</h3>
+                  <p className="text-slate-400 text-sm mb-6 h-20 overflow-hidden leading-relaxed">{proj.desc}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {proj.tags.map(tag => (
+                        <span key={tag} className="text-xs font-mono text-slate-300 bg-slate-900/80 px-2 py-1 rounded border border-slate-700 group-hover:border-cyan-500/30 transition-colors">
+                            #{tag}
+                        </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* İletişim Section */}
+      <section id="contact" className="py-20 relative overflow-hidden">
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-slate-800/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-slate-700 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-bold mb-4 text-white">İletişime Geçin</h2>
+              <p className="text-slate-400">
+                Hollanda veya uzaktan çalışma fırsatları, proje işbirlikleri için mesaj atabilirsiniz.
+              </p>
+            </div>
+
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="group">
+                  <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">İsim</label>
+                  <input type="text" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Adınız" />
+                </div>
+                <div className="group">
+                  <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">E-posta</label>
+                  <input type="email" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="ornek@mail.com" />
+                </div>
+              </div>
+              
+              <div className="group">
+                <label className="block text-sm font-medium text-cyan-400 mb-2 group-focus-within:text-cyan-300 transition-colors">Mesaj</label>
+                <textarea rows="4" className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all" placeholder="Proje detayları..."></textarea>
+              </div>
+
+              <button type="submit" className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all transform hover:-translate-y-1 flex items-center justify-center group">
+                <Send size={20} className="mr-2 group-hover:rotate-45 transition-transform" />
+                Mesaj Gönder
+              </button>
+            </form>
+            
+            <div className="mt-10 flex flex-col md:flex-row justify-center gap-8 pt-8 border-t border-slate-700/50">
+                <div className="flex items-center justify-center md:justify-start space-x-3">
+                    <div className="p-2 bg-cyan-500/10 rounded-full text-cyan-400">
+                        <Mail size={20} />
+                    </div>
+                    <div className="text-left">
+                        <div className="text-slate-200 font-medium">E-Posta</div>
+                        <div className="text-slate-400 text-sm">rustu.ay@example.com</div>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center md:justify-start space-x-3">
+                    <div className="p-2 bg-purple-500/10 rounded-full text-purple-400">
+                        <MapPin size={20} />
+                    </div>
+                    <div className="text-left">
+                        <div className="text-slate-200 font-medium">Konum</div>
+                        <div className="text-slate-400 text-sm">Hollanda</div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 text-center text-slate-500 text-sm border-t border-slate-800 bg-[#0f172a]/90 backdrop-blur relative z-10">
+        <p>&copy; {new Date().getFullYear()} Rüştü Ay. Hollanda'da ❤️ ile kodlandı.</p>
+        <div className="mt-2 flex justify-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse delay-100"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse delay-200"></span>
+        </div>
+      </footer>
+
+      {/* Global Styles for Animations */}
+      <style>{`
+        @keyframes fade-in-up {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 1s ease-out;
+        }
+        @keyframes gradient-x {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient-x {
+          background-size: 200% 200%;
+          animation: gradient-x 5s ease infinite;
+        }
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+      `}</style>
+    </div>
+  );
+}
